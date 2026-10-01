@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 __author__ = "Vitaliy Zakaznikov"
-__version__ = "1.10.__VERSION__"
+__version__ = "1.10.260921.1182403+openleap.1"
 __name__ = "testflows.github.hetzner.runners"
 __license__ = f"""
 Copyright 2023-2025 Katteli Inc.
