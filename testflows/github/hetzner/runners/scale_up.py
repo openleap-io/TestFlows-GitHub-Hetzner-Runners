@@ -1467,9 +1467,13 @@ def scale_up(
                         queued_runs + in_progress_runs, with_label, action=action
                     )
                     metrics.update_jobs(runs_jobs)
-                    # For job processing, we'll use both queued and in_progress runs
-                    # to ensure stolen runner detection works for all cases
-                    workflow_runs = queued_runs + in_progress_runs
+                    # openleap fork: server CREATION uses only queued runs. Upstream also feeds in_progress runs
+                    # here for "stolen runner detection", which only applies when standby runners exist (this
+                    # deployment uses none). For a long job on an own-prefixed runner that path mis-fires: it
+                    # treats the running job as having stolen the runner, creates a duplicate server whose runner
+                    # registers under the same (run_id,job_id) name, GitHub replaces the live runner, and the job
+                    # dies at ~13-14 min. The metrics above still use both queued + in_progress.
+                    workflow_runs = queued_runs
 
                 with Action(
                     "Getting list of servers", level=logging.DEBUG, interval=interval

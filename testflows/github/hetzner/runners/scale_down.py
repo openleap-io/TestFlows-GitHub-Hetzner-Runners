@@ -109,6 +109,12 @@ def delete_server(server: BoundServer, action: str = "delete"):
         server: The server to delete
         action: The action being performed (e.g., "powered_off_delete", "zombie_delete", "unused_delete")
     """
+    # openleap fork: never delete a server younger than 55 min (within Hetzner's paid first hour), so a
+    # long-running job is not torn down mid-run by a scale-down race. recycle still reuses powered-off
+    # servers and max_runners bounds the pool, so this cannot exhaust the quota.
+    _age = age(server)
+    if _age.days == 0 and _age.hours == 0 and _age.minutes < 55:
+        return
     try:
         server.delete()
     except Exception as e:
